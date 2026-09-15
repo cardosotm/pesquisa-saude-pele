@@ -120,12 +120,17 @@ module.exports = async (req, res) => {
 
       if (supabase) {
         try {
-          await supabase.from(TABLE_NAME).delete().neq('id', 'keep_none');
+          const { error } = await supabase.from(TABLE_NAME).delete().neq('id', 'keep_none');
+          if (error) {
+            console.error('Erro ao deletar no Supabase:', error);
+            return res.status(500).json({ error: error.message });
+          }
         } catch (err) {
           console.error('Erro ao deletar:', err);
+          return res.status(500).json({ error: err.message });
         }
       }
-      return res.status(200).json({ success: true, message: 'Dados resetados com sucesso.' });
+      return res.status(200).json({ success: true, message: 'Todas as respostas foram apagadas com sucesso no Supabase.' });
     }
   }
 
