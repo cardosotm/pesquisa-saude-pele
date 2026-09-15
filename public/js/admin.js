@@ -438,24 +438,84 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Limpar dados locais (com token de autenticação)
-  btnClearData.addEventListener('click', async () => {
-    if (!confirm('Deseja realmente apagar todos os dados coletados localmente?')) return;
-    try {
-      const res = await fetch('/api/respostas', { 
-        method: 'DELETE',
-        headers: authHeaders()
-      });
-      if (res.status === 401 || res.status === 403) {
-        clearToken();
-        showLogin();
-        return;
+
+  // Modal de Confirmação de Exclusão
+  const confirmDeleteModal = document.getElementById('confirm-delete-modal');
+  const btnCancelDelete = document.getElementById('btn-cancel-delete');
+  const btnConfirmDelete = document.getElementById('btn-confirm-delete');
+  const btnRefreshData = document.getElementById('btn-refresh-data');
+
+  if (btnClearData && confirmDeleteModal) {
+    btnClearData.addEventListener('click', (e) => {
+      e.preventDefault();
+      confirmDeleteModal.classList.remove('hidden');
+    });
+  }
+
+  if (btnCancelDelete && confirmDeleteModal) {
+    btnCancelDelete.addEventListener('click', () => {
+      confirmDeleteModal.classList.add('hidden');
+    });
+    // Fechar ao clicar no backdrop escuro
+    confirmDeleteModal.addEventListener('click', (e) => {
+      if (e.target === confirmDeleteModal) {
+        confirmDeleteModal.classList.add('hidden');
       }
+    });
+  }
+
+  if (btnConfirmDelete && confirmDeleteModal) {
+    btnConfirmDelete.addEventListener('click', async () => {
+      btnConfirmDelete.disabled = true;
+      const originalBtnHtml = btnConfirmDelete.innerHTML;
+      btnConfirmDelete.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-xs"></i><span>Apagando...</span>';
+
+      try {
+        const res = await fetch('/api/respostas', { 
+          method: 'DELETE',
+          headers: authHeaders()
+        });
+        if (res.status === 401 || res.status === 403) {
+          clearToken();
+          showLogin();
+          return;
+        }
+        await loadData();
+        confirmDeleteModal.classList.add('hidden');
+      } catch (err) {
+        alert('Erro ao apagar dados do banco de dados.');
+      } finally {
+        btnConfirmDelete.disabled = false;
+        btnConfirmDelete.innerHTML = originalBtnHtml;
+      }
+    });
+  }
+
+  // Botão de Atualizar / Sincronizar
+  if (btnRefreshData) {
+    btnRefreshData.addEventListener('click', async () => {
+      const icon = btnRefreshData.querySelector('i');
+      if (icon) icon.classList.add('fa-spin');
       await loadData();
-    } catch (err) {
-      alert('Erro ao limpar dados.');
+      setTimeout(() => {
+        if (icon) icon.classList.remove('fa-spin');
+      }, 500);
+    });
+  }
+
+  // Atualização automática ao retornar à aba ou desbloquear o celular
+  window.addEventListener('focus', () => {
+    if (getToken()) {
+      loadData();
     }
   });
+
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && getToken()) {
+      loadData();
+    }
+  });
+
 
   // Exportar para CSV
   btnExportCsv.addEventListener('click', () => {
