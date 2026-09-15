@@ -8,6 +8,16 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentStep = 1;
   const totalSteps = 4;
 
+  const nomeInput = document.getElementById('input-nome');
+  if (nomeInput) {
+    nomeInput.addEventListener('input', () => {
+      if (nomeInput.value.trim()) {
+        const card = nomeInput.closest('[data-required]');
+        if (card) card.classList.remove('border-red-500/80', 'ring-2', 'ring-red-500/30');
+      }
+    });
+  }
+
   // Lógica de seleção dos botões de opção
   document.querySelectorAll('.choice-card').forEach(btn => {
     btn.addEventListener('click', () => {
