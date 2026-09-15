@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#080c15" />
+  <title>Painel Administrativo & Gráficos | Biomedicina Estética</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <style>
+    html, body {
+      background-color: #080c15 !important;
+      color: #f1f5f9;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+    h1, h2, h3, h4, .font-heading {
+      font-family: 'Outfit', sans-serif;
+    }
+    .ambient-glow {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100vw;
+      height: 100vh;
+      background: 
+        radial-gradient(circle at 10% 10%, rgba(244, 114, 182, 0.10) 0%, transparent 45%),
+        radial-gradient(circle at 90% 15%, rgba(45, 212, 191, 0.08) 0%, transparent 45%),
+        radial-gradient(circle at 50% 80%, rgba(139, 92, 246, 0.06) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .glass-card {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.6);
+    }
+  </style>
+</head>
+<body class="bg-[#080c15] text-slate-100 min-h-screen flex flex-col justify-between relative selection:bg-pink-500 selection:text-white">
+
+  <!-- Fundo com Iluminação Ambiente Escura -->
+  <div class="ambient-glow"></div>
+
+  <!-- ============================================================ -->
+  <!-- MODAL DE LOGIN / ACESSO RESTRITO -->
+  <!-- ============================================================ -->
+  <div id="login-modal" class="fixed inset-0 z-50 bg-[#080c15]/90 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="glass-card rounded-3xl p-6 sm:p-8 max-w-md w-full space-y-6 border border-white/10 shadow-2xl relative">
+      <div class="text-center space-y-2.5">
+        <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-pink-500 to-teal-400 text-slate-950 flex items-center justify-center mx-auto text-2xl shadow-xl shadow-pink-500/25">
+          <i class="fa-solid fa-lock"></i>
+        </div>
+        <div class="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-pink-500/10 border border-pink-500/20 text-pink-400 text-[10px] font-bold uppercase tracking-wider">
+          <i class="fa-solid fa-shield-halved text-[9px]"></i>
+          <span>Área Restrita</span>
+        </div>
+        <h2 class="text-xl sm:text-2xl font-black text-white">Painel do Administrador</h2>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Digite a senha de acesso para visualizar os gráficos, métricas analíticas e a tabela de respostas.
+        </p>
+      </div>
+
+      <form id="admin-login-form" class="space-y-4">
+        <div>
+          <label for="admin-password" class="block text-xs font-bold text-slate-300 mb-1.5 uppercase tracking-wider">
+            Senha do Painel
+          </label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+              <i class="fa-solid fa-key text-xs"></i>
+            </div>
+            <input 
+              type="password" 
+              id="admin-password" 
+              required 
+              placeholder="Digite sua senha..."
+              class="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-900/90 border border-white/10 focus:border-pink-500 focus:ring-2 focus:ring-pink-500/20 outline-none text-sm text-slate-100 placeholder-slate-500 transition" 
+            />
+          </div>
+        </div>
+
+        <div id="login-error-msg" class="hidden text-xs font-semibold text-rose-400 bg-rose-500/10 border border-rose-500/20 p-3 rounded-xl flex items-center space-x-2">
+          <i class="fa-solid fa-circle-exclamation text-rose-400"></i>
+          <span id="login-error-text">Senha incorreta. Tente novamente.</span>
+        </div>
+
+        <button 
+          type="submit" 
+          id="btn-do-login" 
+          class="w-full py-3.5 bg-gradient-to-r from-pink-500 via-rose-500 to-teal-400 hover:from-pink-600 hover:to-teal-500 text-slate-950 font-black rounded-xl text-sm shadow-xl shadow-pink-500/25 flex items-center justify-center space-x-2 transition transform active:scale-95"
+        >
+          <span>Entrar no Painel</span>
+          <i class="fa-solid fa-arrow-right text-xs"></i>
+        </button>
+      </form>
+
+      <div class="pt-2 text-center border-t border-white/10">
+        <a href="/" class="text-xs font-medium text-slate-400 hover:text-pink-300 transition inline-flex items-center space-x-1.5">
+          <i class="fa-solid fa-arrow-left text-[10px]"></i>
+          <span>Voltar ao Formulário Público</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- DASHBOARD PRINCIPAL (Exibido somente após login autenticado) -->
+  <!-- ============================================================ -->
+  <div id="admin-dashboard" class="hidden flex-1 flex flex-col relative z-10">
+
+    <!-- Top Navigation Bar -->
+    <header class="w-full border-b border-white/10 backdrop-blur-xl bg-[#0b101d]/80 sticky top-0 z-30">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-pink-500 to-teal-400 flex items-center justify-center text-slate-950 shadow-lg shadow-pink-500/20 font-black">
+            <i class="fa-solid fa-chart-line text-lg"></i>
+          </div>
+          <div>
+            <div class="flex items-center space-x-2">
+              <span class="text-[10px] uppercase tracking-wider font-bold text-pink-400 bg-pink-500/10 px-2 py-0.5 rounded border border-pink-500/20">Biomedicina Estética</span>
+              <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span> Autenticado
+              </span>
+            </div>
+            <h1 class="text-base sm:text-lg font-extrabold text-white tracking-tight">
+              Painel Analítico de Saúde da Pele & Hormônios
+            </h1>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex items-center space-x-2.5">
+          <button id="btn-seed" class="px-3 py-2 bg-gradient-to-r from-pink-500/20 to-purple-500/20 hover:from-pink-500/30 hover:to-purple-500/30 border border-pink-500/30 text-pink-300 rounded-xl text-xs font-semibold flex items-center space-x-1.5 transition">
+            <i class="fa-solid fa-wand-magic-sparkles text-pink-400"></i>
+            <span class="hidden sm:inline">+25 Amostras</span>
+          </button>
+          <button id="btn-export-csv" class="px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/10 text-slate-200 rounded-xl text-xs font-semibold flex items-center space-x-1.5 transition">
+            <i class="fa-solid fa-file-csv text-teal-400"></i>
+            <span>Exportar CSV</span>
+          </button>
+          <a href="/" target="_blank" class="px-3 py-2 bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-slate-950 rounded-xl text-xs font-bold flex items-center space-x-1.5 transition shadow-lg shadow-teal-500/20">
+            <i class="fa-solid fa-square-arrow-up-right"></i>
+            <span class="hidden sm:inline">Ver Formulário</span>
+          </a>
+          <button id="btn-logout" class="px-3 py-2 bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/30 text-rose-300 rounded-xl text-xs font-bold flex items-center space-x-1.5 transition" title="Encerrar Sessão">
+            <i class="fa-solid fa-right-from-bracket text-xs"></i>
+            <span>Sair</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6 flex-1">
+
+      <!-- Filters & Status -->
+      <div class="glass-card rounded-2xl p-4 sm:p-5 flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center space-x-2 text-xs font-bold text-slate-400">
+          <i class="fa-solid fa-filter text-pink-400"></i>
+          <span>FILTRAR GRÁFICOS:</span>
+        </div>
+        <div class="flex flex-wrap items-center gap-3">
+          <!-- Filter Age -->
+          <select id="filter-age" class="bg-slate-900 border border-white/10 text-slate-300 rounded-xl text-xs px-3 py-2 focus:outline-none focus:border-pink-500">
+            <option value="all">Todas as Faixas Etárias</option>
+            <option value="12 a 15 anos">12 a 15 anos</option>
+            <option value="16 a 18 anos">16 a 18 anos</option>
+            <option value="19 a 24 anos">19 a 24 anos</option>
+            <option value="25 a 29 anos">25 a 29 anos</option>
+            <option value="30 anos ou mais">30 anos ou mais</option>
+          </select>
+
+          <!-- Filter Gender -->
+          <select id="filter-gender" class="bg-slate-900 border border-white/10 text-slate-300 rounded-xl text-xs px-3 py-2 focus:outline-none focus:border-teal-500">
+            <option value="all">Todos os Gêneros</option>
+            <option value="Feminino">Feminino</option>
+            <option value="Masculino">Masculino</option>
+            <option value="Outro / Prefiro não responder">Outro / Prefiro não responder</option>
+          </select>
+
+          <button id="btn-reset-filters" class="text-xs text-slate-400 hover:text-white px-2.5 py-1.5 rounded-lg border border-white/10 hover:bg-white/5 transition">
+            <i class="fa-solid fa-rotate-right mr-1"></i> Limpar Filtros
+          </button>
+        </div>
+      </div>
+
+      <!-- KPI Metric Cards (5 Cards) -->
+      <div class="grid grid-cols-2 lg:grid-cols-5 gap-3.5 sm:gap-4">
+        <!-- Card 1: Total Respostas -->
+        <div class="glass-card rounded-2xl p-4 sm:p-5 relative overflow-hidden">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-slate-400">Amostra Coletada</span>
+            <span class="w-8 h-8 rounded-lg bg-pink-500/10 text-pink-400 flex items-center justify-center text-xs"><i class="fa-solid fa-users"></i></span>
+          </div>
+          <div class="mt-2">
+            <div id="kpi-total" class="text-2xl sm:text-3xl font-black text-white">0</div>
+            <span class="text-[11px] text-slate-400">respostas válidas</span>
+          </div>
+        </div>
+
+        <!-- Card 2: Prevalência de Acne -->
+        <div class="glass-card rounded-2xl p-4 sm:p-5 relative overflow-hidden">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-slate-400">Prevalência de Acne</span>
+            <span class="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-400 flex items-center justify-center text-xs"><i class="fa-solid fa-circle-dot"></i></span>
+          </div>
+          <div class="mt-2">
+            <div id="kpi-acne" class="text-2xl sm:text-3xl font-black text-rose-400">0%</div>
+            <span class="text-[11px] text-slate-400">possuem com frequência</span>
+          </div>
+        </div>
+
+        <!-- Card 3: Uso Diário de Protetor Solar -->
+        <div class="glass-card rounded-2xl p-4 sm:p-5 relative overflow-hidden">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-slate-400">Fotoproteção Diária</span>
+            <span class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center text-xs"><i class="fa-solid fa-sun"></i></span>
+          </div>
+          <div class="mt-2">
+            <div id="kpi-sunscreen" class="text-2xl sm:text-3xl font-black text-amber-400">0%</div>
+            <span class="text-[11px] text-slate-400">utilizam todos os dias</span>
+          </div>
+        </div>
+
+        <!-- Card 4: Impacto na Autoestima -->
+        <div class="glass-card rounded-2xl p-4 sm:p-5 relative overflow-hidden">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-slate-400">Autoestima Afetada</span>
+            <span class="w-8 h-8 rounded-lg bg-purple-500/10 text-purple-400 flex items-center justify-center text-xs"><i class="fa-solid fa-heart-crack"></i></span>
+          </div>
+          <div class="mt-2">
+            <div id="kpi-selfesteem" class="text-2xl sm:text-3xl font-black text-purple-400">0%</div>
+            <span class="text-[11px] text-slate-400">frequente ou dependente</span>
+          </div>
+        </div>
+
+        <!-- Card 5: Acesso a Dermatologistas -->
+        <div class="glass-card rounded-2xl p-4 sm:p-5 relative overflow-hidden col-span-2 lg:col-span-1">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-slate-400">Nunca Foram ao Dermato</span>
+            <span class="w-8 h-8 rounded-lg bg-teal-500/10 text-teal-400 flex items-center justify-center text-xs"><i class="fa-solid fa-user-doctor"></i></span>
+          </div>
+          <div class="mt-2">
+            <div id="kpi-dermato" class="text-2xl sm:text-3xl font-black text-teal-400">0%</div>
+            <span class="text-[11px] text-slate-400">sem consulta prévia</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Grid: 8 Analytic Charts -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <!-- Gráfico 1: Perfil Demográfico (Idade e Gênero) -->
+        <div class="glass-card rounded-2xl p-5 space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-bold text-white flex items-center space-x-2">
+              <i class="fa-solid fa-users text-pink-400 text-xs"></i>
+              <span>1. Perfil Demográfico da Amostra (Idade & Gênero)</span>
+            </h3>
+          </div>
+          <p class="text-xs text-slate-400">Distribuição percentual dos participantes segundo faixa etária e gênero.</p>
+          <div class="h-64 relative">
+            <canvas id="chart-demographics"></canvas>
+          </div>
+        </div>
+
+        <!-- Gráfico 2: Manifestações Hormonais (Oleosidade e Acne) -->
+        <div class="glass-card rounded-2xl p-5 space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-bold text-white flex items-center space-x-2">
+              <i class="fa-solid fa-droplet text-teal-400 text-xs"></i>
+              <span>2. Manifestações Hormonais (Oleosidade Periódica & Acne)</span>
+            </h3>
+          </div>
+          <p class="text-xs text-slate-400">Percepção de aumento de oleosidade em ciclos e frequência de lesões acneicas.</p>
+          <div class="h-64 relative">
+            <canvas id="chart-hormonal"></canvas>
+          </div>
+        </div>
+
+        <!-- Gráfico 3: Hábitos de Skincare (Protetor, Sabonete e Hidratante) -->
+        <div class="glass-card rounded-2xl p-5 space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-bold text-white flex items-center space-x-2">
+              <i class="fa-solid fa-bottle-droplet text-amber-400 text-xs"></i>
+              <span>3. Adesão aos Hábitos de Skincare</span>
+            </h3>
+          </div>
+          <p class="text-xs text-slate-400">Nível de adesão aos 3 pilares básicos: Protetor Solar, Sabonete Facial e Hidratante.</p>
+          <div class="h-64 relative">
+            <canvas id="chart-skincare"></canvas>
+          </div>
+        </div>
+
+        <!-- Gráfico 4: Fontes de Informação Sobre Pele -->
+        <div class="glass-card rounded-2xl p-5 space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-bold text-white flex items-center space-x-2">
+              <i class="fa-solid fa-hashtag text-purple-400 text-xs"></i>
+              <span>4. Fontes de Informação: Redes Sociais vs. Saúde</span>
+            </h3>
+          </div>
+          <p class="text-xs text-slate-400">Origem predominante das orientações de cuidados estéticos da amostra.</p>
+          <div class="h-64 relative">
+            <canvas id="chart-sources"></canvas>
+          </div>
+        </div>
+
+        <!-- Gráfico 5: Impacto Psicossocial e Autoestima -->
+        <div class="glass-card rounded-2xl p-5 space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-bold text-white flex items-center space-x-2">
+              <i class="fa-solid fa-face-frown text-rose-400 text-xs"></i>
+              <span>5. Impacto Emocional e Esquiva Social</span>
+            </h3>
+          </div>
+          <p class="text-xs text-slate-400">Afetação da autoestima e evasão de fotos ou encontros devido à estética cutânea.</p>
+          <div class="h-64 relative">
+            <canvas id="chart-selfesteem"></canvas>
+          </div>
+        </div>
+
+        <!-- Gráfico 6: Fatores Agravantes do Estilo de Vida -->
+        <div class="glass-card rounded-2xl p-5 space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-bold text-white flex items-center space-x-2">
+              <i class="fa-solid fa-burger text-orange-400 text-xs"></i>
+              <span>6. Fatores do Estilo de Vida (Alimentação vs. Estresse/Sono)</span>
+            </h3>
+          </div>
+          <p class="text-xs text-slate-400">Correlação percebida entre dieta hiperglicêmica/laticínios e privação de sono/estresse.</p>
+          <div class="h-64 relative">
+            <canvas id="chart-lifestyle"></canvas>
+          </div>
+        </div>
+
+        <!-- Gráfico 7: Acesso a Tratamento Dermatológico Especializado -->
+        <div class="glass-card rounded-2xl p-5 space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-bold text-white flex items-center space-x-2">
+              <i class="fa-solid fa-stethoscope text-emerald-400 text-xs"></i>
+              <span>7. Acesso a Consultas Dermatológicas Especializadas</span>
+            </h3>
+          </div>
+          <p class="text-xs text-slate-400">Frequência histórica de acompanhamento médico e clínico profissional.</p>
+          <div class="h-64 relative">
+            <canvas id="chart-treatment"></canvas>
+          </div>
+        </div>
+
+        <!-- Gráfico 8: Cruzamento Biomédico (Conhecimento vs. Cuidado Real) -->
+        <div class="glass-card rounded-2xl p-5 space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-bold text-white flex items-center space-x-2">
+              <i class="fa-solid fa-lightbulb text-yellow-400 text-xs"></i>
+              <span>8. Consciência do Tipo de Pele vs. Cuidados Reais</span>
+            </h3>
+          </div>
+          <p class="text-xs text-slate-400">Grau de certeza sobre o tipo cutâneo comparado ao uso de sabonetes específicos.</p>
+          <div class="h-64 relative">
+            <canvas id="chart-correlation"></canvas>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Tabela Detalhada de Respostas -->
+      <div class="glass-card rounded-2xl p-5 sm:p-6 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-4">
+          <div>
+            <h3 class="text-base font-bold text-white">Respostas Individuais dos Participantes</h3>
+            <p class="text-xs text-slate-400">Registros em tempo real armazenados localmente.</p>
+          </div>
+          <div class="flex items-center space-x-2">
+            <input type="text" id="table-search" placeholder="Buscar por idade, gênero..." class="bg-slate-900 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-pink-500 w-48" />
+            <button id="btn-clear-data" class="text-xs text-rose-400 hover:text-rose-300 border border-rose-500/20 px-3 py-1.5 rounded-xl hover:bg-rose-500/10 transition">
+              <i class="fa-solid fa-trash-can mr-1"></i> Limpar
+            </button>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs text-slate-300">
+            <thead class="bg-white/5 uppercase text-[10px] text-slate-400 font-bold border-b border-white/10">
+              <tr>
+                <th class="p-3">Data</th>
+                <th class="p-3">Idade</th>
+                <th class="p-3">Gênero</th>
+                <th class="p-3">Mudança Adolescência</th>
+                <th class="p-3">Acne</th>
+                <th class="p-3">Protetor Solar</th>
+                <th class="p-3">Autoestima</th>
+                <th class="p-3">Consulta Dermato</th>
+              </tr>
+            </thead>
+            <tbody id="table-body" class="divide-y divide-white/5 font-mono text-[11px]">
+              <!-- Preenchido via JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+
+    <footer class="w-full border-t border-white/10 py-5 text-center text-xs text-slate-500 mt-8">
+      <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+        <p>© 2026 Painel de Pesquisa em Biomedicina Estética • Uso Acadêmico</p>
+        <div class="text-slate-400">
+          <span>Ambiente Local • Porta 3001</span>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="/js/admin.js"></script>
+</body>
+</html>
