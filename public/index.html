@@ -88,7 +88,12 @@
     .progress-bar-glow {
       box-shadow: 0 0 14px rgba(244, 114, 182, 0.6);
     }
-  </style>
+  
+    button, input, select {
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+</style>
 </head>
 <body class="bg-[#080c15] text-slate-100 min-h-screen flex flex-col justify-between relative selection:bg-pink-500 selection:text-white">
 
@@ -164,7 +169,7 @@
               id="input-nome" 
               required 
               placeholder="Ex: Maria Eduarda Silva"
-              class="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-white/10 focus:border-pink-500 focus:ring-2 focus:ring-pink-500/20 outline-none text-sm text-slate-100 placeholder-slate-500 transition" 
+              class="w-full px-4 py-3.5 rounded-xl bg-slate-900/90 border border-white/10 focus:border-pink-500 focus:ring-2 focus:ring-pink-500/20 outline-none text-[16px] sm:text-sm text-slate-100 placeholder-slate-500 transition" 
             />
           </div>
         </div>
