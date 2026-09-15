@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#080c15" />
+  <title>Pesquisa Acadêmica | Saúde da Pele & Biomedicina Estética</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              400: '#f472b6',
+              500: '#ec4899',
+              600: '#db2777',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  
+  <style>
+    html, body {
+      background-color: #080c15 !important;
+      color: #f1f5f9;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+    h1, h2, h3, h4, .font-heading {
+      font-family: 'Outfit', sans-serif;
+    }
+    .ambient-glow {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100vw;
+      height: 100vh;
+      background: 
+        radial-gradient(circle at 15% 15%, rgba(244, 114, 182, 0.12) 0%, transparent 45%),
+        radial-gradient(circle at 85% 20%, rgba(45, 212, 191, 0.10) 0%, transparent 45%),
+        radial-gradient(circle at 50% 85%, rgba(168, 85, 247, 0.08) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .glass-card {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.6);
+    }
+    .choice-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+    }
+    .choice-card:hover {
+      background: rgba(244, 114, 182, 0.08);
+      border-color: rgba(244, 114, 182, 0.35);
+      transform: translateY(-1px);
+    }
+    .choice-card.selected {
+      background: linear-gradient(135deg, rgba(244, 114, 182, 0.22), rgba(45, 212, 191, 0.18)) !important;
+      border-color: rgba(244, 114, 182, 0.85) !important;
+      box-shadow: 0 0 20px rgba(244, 114, 182, 0.25);
+      color: #ffffff !important;
+    }
+    .choice-card.selected .check-circle {
+      background: #f472b6;
+      border-color: #f472b6;
+      color: #080c15;
+    }
+    .progress-bar-glow {
+      box-shadow: 0 0 14px rgba(244, 114, 182, 0.6);
+    }
+  </style>
+</head>
+<body class="bg-[#080c15] text-slate-100 min-h-screen flex flex-col justify-between relative selection:bg-pink-500 selection:text-white">
+
+  <!-- Fundo com Iluminação Ambiente Escura -->
+  <div class="ambient-glow"></div>
+
+  <!-- Header Superior -->
+  <header class="relative z-20 w-full border-b border-white/10 backdrop-blur-xl bg-[#0b101d]/80 sticky top-0">
+    <div class="max-w-4xl mx-auto px-4 py-3.5 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-pink-500 to-teal-400 flex items-center justify-center text-slate-950 shadow-lg shadow-pink-500/20 font-black">
+          <i class="fa-solid fa-spa text-base"></i>
+        </div>
+        <div>
+          <span class="text-[10px] sm:text-xs uppercase tracking-wider font-bold text-pink-400 block">Biomedicina Estética</span>
+          <h1 class="text-xs sm:text-sm font-bold text-white tracking-tight leading-none">Saúde da Pele & Hormônios</h1>
+        </div>
+      </div>
+      <a href="/admin" class="text-xs font-semibold text-slate-300 hover:text-pink-400 border border-white/10 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 transition flex items-center space-x-1.5">
+        <i class="fa-solid fa-chart-pie text-xs text-teal-400"></i>
+        <span>Área Admin</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Conteúdo Principal -->
+  <main class="relative z-10 max-w-2xl w-full mx-auto px-4 py-6 sm:py-10 flex-1">
+    
+    <!-- Barra de Progresso Global -->
+    <div class="mb-6 space-y-2">
+      <div class="flex items-center justify-between text-xs font-medium text-slate-400">
+        <span id="step-label" class="font-bold text-pink-400 uppercase tracking-wider">Etapa 1 de 4</span>
+        <span id="step-percent" class="font-mono text-slate-300">25%</span>
+      </div>
+      <div class="w-full h-2 bg-slate-900 rounded-full overflow-hidden p-0.5 border border-white/10">
+        <div id="progress-bar" class="h-full bg-gradient-to-r from-pink-500 via-purple-500 to-teal-400 rounded-full progress-bar-glow transition-all duration-300" style="width: 25%;"></div>
+      </div>
+    </div>
+
+    <!-- Container do Formulário -->
+    <form id="skin-survey-form" class="space-y-6">
+
+      <!-- ============================================================ -->
+      <!-- ETAPA 1: PERFIL DO PARTICIPANTE -->
+      <!-- ============================================================ -->
+      <section id="step-1" class="step-pane space-y-6">
+        <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-4 text-center">
+          <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-pink-500/10 border border-pink-500/20 text-pink-400 text-xs font-bold uppercase tracking-wider">
+            <i class="fa-solid fa-graduation-cap"></i>
+            <span>Pesquisa Acadêmica de Graduação</span>
+          </div>
+          <h2 class="text-xl sm:text-2xl font-black text-white leading-tight">
+            Influência Hormonal na Saúde da Pele de Adolescentes e Jovens
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-300 max-w-lg mx-auto leading-relaxed">
+            Bem-vindo(a)! Este questionário faz parte de uma pesquisa acadêmica no curso de <strong class="text-pink-300">Biomedicina Estética</strong>. 
+            Suas respostas são totalmente anônimas e nos ajudarão a entender melhor o impacto das variações hormonais e hábitos na saúde da pele.
+          </p>
+        </div>
+
+        <!-- Pergunta Demográfica: Idade -->
+        <div class="glass-card rounded-2xl p-5 sm:p-6 space-y-3" data-required="idade">
+          <div class="flex items-center space-x-2 text-xs font-bold text-pink-400 uppercase tracking-wider">
+            <i class="fa-solid fa-calendar-days"></i>
+            <span>Perfil Inicial</span>
+          </div>
+          <h3 class="text-sm sm:text-base font-bold text-white">Qual é a sua faixa etária?</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+            <button type="button" class="choice-card p-3 rounded-xl flex items-center justify-between text-left text-xs sm:text-sm font-semibold text-slate-200" data-field="idade" data-val="12 a 15 anos">
+              <span>12 a 15 anos</span>
+              <span class="check-circle w-5 h-5 rounded-full border border-white/20 flex items-center justify-center text-[10px]"><i class="fa-solid fa-check opacity-0"></i></span>
+            </button>
+            <button type="button" class="choice-card p-3 rounded-xl flex items-center justify-between text-left text-xs sm:text-sm font-semibold text-slate-200" data-field="idade" data-val="16 a 18 anos">
+              <span>16 a 18 anos</span>
+              <span class="check-circle w-5 h-5 rounded-full border border-white/20 flex items-center justify-center text-[10px]"><i class="fa-solid fa-check opacity-0"></i></span>
+            </button>
+            <button type="button" class="choice-card p-3 rounded-xl flex items-center justify-between text-left text-xs sm:text-sm font-semibold text-slate-200" data-field="idade" data-val="19 a 24 anos">
+              <span>19 a 24 anos</span>
+              <span class="check-circle w-5 h-5 rounded-full border border-white/20 flex items-center justify-center text-[10px]"><i class="fa-solid fa-check opacity-0"></i></span>
+            </button>
+            <button type="button" class="choice-card p-3 rounded-xl flex items-center justify-between text-left text-xs sm:text-sm font-semibold text-slate-200" data-field="idade" data-val="25 a 29 anos">
+              <span>25 a 29 anos</span>
+              <span class="check-circle w-5 h-5 rounded-full border border-white/20 flex items-center justify-center text-[10px]"><i class="fa-solid fa-check opacity-0"></i></span>
+            </button>
+            <button type="button" class="choice-card p-3 rounded-xl flex items-center justify-between text-left text-xs sm:text-sm font-semibold text-slate-200 sm:col-span-2" data-field="idade" data-val="30 anos ou mais">
+              <span>30 anos ou mais</span>
+              <span class="check-circle w-5 h-5 rounded-full border border-white/20 flex items-center justify-center text-[10px]"><i class="fa-solid fa-check opacity-0"></i></span>
+            </button>
+          </div>
+          <input type="hidden" name="idade" required />
+        </div>
+
+        <!-- Pergunta Demográfica: Gênero / Sexo Biológico -->
+        <div class="glass-card rounded-2xl p-5 sm:p-6 space-y-3" data-required="genero">
+          <div class="flex items-center space-x-2 text-xs font-bold text-teal-400 uppercase tracking-wider">
+            <i class="fa-solid fa-venus-mars"></i>
+            <span>Fatores Biológicos</span>
+          </div>
+          <h3 class="text-sm sm:text-base font-bold text-white">Com qual gênero você se identifica?</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
+            <button type="button" class="choice-card p-3 rounded-xl flex items-center justify-between text-left text-xs sm:text-sm font-semibold text-slate-200" data-field="genero" data-val="Feminino">
+              <span>Feminino</span>
+              <span class="check-circle w-5 h-5 rounded-full border border-white/20 flex items-center justify-center text-[10px]"><i class="fa-solid fa-check opacity-0"></i></span>
+            </button>
+            <button type="button" class="choice-card p-3 rounded-xl flex items-center justify-between text-left text-xs sm:text-sm font-semibold text-slate-200" data-field="genero" data-val="Masculino">
+              <span>Masculino</span>
+              <span class="check-circle w-5 h-5 rounded-full border border-white/20 flex items-center justify-center text-[10px]"><i class="fa-solid fa-check opacity-0"></i></span>
+            </button>
+            <button type="button" class="choice-card p-3 rounded-xl flex items-center justify-between text-left text-xs sm:text-sm font-semibold text-slate-200" data-field="genero" data-val="Outro / Prefiro não responder">
+              <span>Outro / Prefiro não responder</span>
+              <span class="check-circle w-5 h-5 rounded-full border border-white/20 flex items-center justify-center text-[10px]"><i class="fa-solid fa-check opacity-0"></i></span>
+            </button>
+          </div>
+          <input type="hidden" name="genero" required />
+        </div>
+
+        <!-- Pergunta Demográfica: Rotina -->
+        <div class="glass-card rounded-2xl p-5 sm:p-6 space-y-3" data-required="rotina">
+          <div class="flex items-center space-x-2 text-xs font-bold text-purple-400 uppercase tracking-wider">
+            <i class="fa-solid fa-clock"></i>
+            <span>Rotina Diária</span>
+          </div>
+          <h3 class="text-sm sm:text-base font-bold text-white">Qual é a sua principal ocupação atual?</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+            <button type="button" class="choice-card p-3 rounded-xl flex items-center justify-between text-left text-xs sm:text-sm font-semibold text-slate-200" data-field="rotina" data-val="Apenas estuda">
+              <span>Apenas estuda</span>
+              <span class="check-circle w-5 h-5 rounded-full border border-white/20 flex items-center justify-center text-[10px]"><i class="fa-solid fa-check opacity-0"></i></span>
+            </button>
+            <button type="button" class="choice-card p-3 rounded-xl flex items-center justify-between text-left text-xs sm:text-sm font-semibold text-slate-200" data-field="rotina" data-val="Estuda e trabalha">
+              <span>Estuda e trabalha</span>
+              <span class="check-circle w-5 h-5 rounded-full border border-white/20 flex items-center justify-center text-[10px]"><i class="fa-solid fa-check opacity-0"></i></span>
+            </button>
+            <button type="button" class="choice-card p-3 rounded-xl flex items-center justify-between text-left text-xs sm:text-sm font-semibold text-slate-200" data-field="rotina" data-val="Apenas trabalha">
+              <span>Apenas trabalha</span>
+              <span class="check-circle w-5 h-5 rounded-full border border-white/20 flex items-center justify-center text-[10px]"><i class="fa-solid fa-check opacity-0"></i></span>
+            </button>
+            <button type="button" class="choice-card p-3 rounded-xl flex items-center justify-between text-left text-xs sm:text-sm font-semibold text-slate-200" data-field="rotina" data-val="Nenhum no momento">
+              <span>Nenhum no momento</span>
+              <span class="check-circle w-5 h-5 rounded-full border border-white/20 flex items-center justify-center text-[10px]"><i class="fa-solid fa-check opacity-0"></i></span>
+            </button>
+          </div>
+          <input type="hidden" name="rotina" required />
+        </div>
+
+        <div class="pt-2 flex justify-end">
+          <button type="button" onclick="goToStep(2)" class="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-pink-500 to-teal-400 hover:from-pink-600 hover:to-teal-500 text-slate-950 font-black rounded-xl text-sm shadow-lg shadow-pink-500/25 flex items-center justify-center space-x-2 transition transform active:scale-95">
+            <span>Iniciar Questionário</span>
+            <i class="fa-solid fa-arrow-right text-xs"></i>
+          </button>
+        </div>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- ETAPA 2: MANIFESTAÇÕES CLÍNICAS E HORMONAIS (Q1, Q2, Q3) -->
+      <!-- ============================================================ -->
+      <section id="step-2" class="step-pane hidden space-y-6">
+        <div class="border-b border-white/10 pb-3 flex items-center space-x-2 text-pink-400 text-xs font-bold uppercase tracking-wider">
+          <i class="fa-solid fa-dna"></i>
+          <span>Bloco 1: Manifestações Clínicas & Hormonais</span>
+        </div>
+
+        <!-- QUESTÃO 1 -->
+        <div class="glass-card rounded-2xl p-5 sm:p-6 space-y-3" data-required="q1_mudanca_adolescencia">
+          <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-pink-500/10 text-pink-400 border border-pink-500/20">Questão 1</span>
+          <h3 class="text-sm sm:text-base font-bold text-white leading-snug">
+            1. Você percebeu mudanças na sua pele durante a adolescência?
+          </h3>
+          <div class="grid grid-cols-3 gap-2.5 pt-1">
+            <button type="button" class="choice-card p-3.5 rounded-xl flex flex-col items-center justify-center text-xs sm:text-sm font-semibold text-slate-200 text-center" data-field="q1_mudanca_adolescencia" data-val="Sim">
+              <span>Sim</span>
+            </button>
+            <button type="button" class="choice-card p-3.5 rounded-xl flex flex-col items-center justify-center text-xs sm:text-sm font-semibold text-slate-200 text-center" data-field="q1_mudanca_adolescencia" data-val="Não">
+              <span>Não</span>
+            </button>
+            <button type="button" class="choice-card p-3.5 rounded-xl flex flex-col items-center justify-center text-xs sm:text-sm font-semibold text-slate-200 text-center" data-field="q1_mudanca_adolescencia" data-val="Talvez">
+              <span>Talvez</span>
+            </button>
+          </div>
+          <input type="hidden" name="q1_mudanca_adolescencia" required />
+        </div>
+
+        <!-- QUESTÃO 2 -->
+        <div class="glass-card rounded-2xl p-5 sm:p-6 space-y-3" data-required="q2_oleosidade_periodos">
+          <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-teal-500/10 text-teal-400 border border-teal-500/20">Questão 2</span>
+          <h3 class="text-sm sm:text-base font-bold text-white leading-snug">
+            2. Você percebe que sua pele fica mais oleosa em alguns períodos?
+          </h3>
+          <div class="grid grid-cols-3 gap-2.5 pt-1">
+            <button type="button" class="choice-card p-3.5 rounded-xl flex flex-col items-center justify-center text-xs sm:text-sm font-semibold text-slate-200 text-center" data-field="q2_oleosidade_periodos" data-val="Sim">
+              <span>Sim</span>
+            </button>
+            <button type="button" class="choice-card p-3.5 rounded-xl flex flex-col items-center justify-center text-xs sm:text-sm font-semibold text-slate-200 text-center" data-field="q2_oleosidade_periodos" data-val="Não">
+              <span>Não</span>
+            </button>
+            <button type="button" class="choice-card p-3.5 rounded-xl flex flex-col items-center justify-center text-xs sm:text-sm font-semibold text-slate-200 text-center" data-field="q2_oleosidade_periodos" data-val="Às vezes">
+              <span>Às vezes</span>
+            </button>
+          </div>
+          <input type="hidden" name="q2_oleosidade_periodos" required />
+        </div>
+
+        <!-- QUESTÃO 3 -->
+        <div class="glass-card rounded-2xl p-5 sm:p-6 space-y-3" data-required="q3_acne_frequencia">
+          <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-500/10 text-purple-400 border border-purple-500/20">Questão 3</span>
+          <h3 class="text-sm sm:text-base font-bold text-white leading-snug">
+            3. Você já teve ou tem acne (espinhas) com frequência?
+          </h3>
+          <div class="grid grid-cols-3 gap-2.5 pt-1">
+            <button type="button" class="choice-card p-3.5 rounded-xl flex flex-col items-center justify-center text-xs sm:text-sm font-semibold text-slate-200 text-center" data-field="q3_acne_frequencia" data-val="Sim">
+              <span>Sim</span>
+            </button>
+            <button type="button" class="choice-card p-3.5 rounded-xl flex flex-col items-center justify-center text-xs sm:text-sm font-semibold text-slate-200 text-center" data-field="q3_acne_frequencia" data-val="Não">
+              <span>Não</span>
+            </button>
+            <button type="button" class="choice-card p-3.5 rounded-xl flex flex-col items-center justify-center text-xs sm:text-sm font-semibold text-slate-200 text-center" data-field="q3_acne_frequencia" data-val="Às vezes">
+              <span>Às vezes</span>
+            </button>
+          </div>
+          <input type="hidden" name="q3_acne_frequencia" required />
+        </div>
+
+        <div class="pt-4 flex items-center justify-between gap-3">
+          <button type="button" onclick="goToStep(1)" class="px-5 py-3 rounded-xl border border-white/10 hover:bg-white/5 text-slate-300 font-semibold text-xs flex items-center space-x-1.5 transition">
+            <i class="fa-solid fa-arrow-left text-xs"></i>
+            <span>Voltar</span>
+          </button>
+          <button type="button" onclick="goToStep(3)" class="px-6 py-3 bg-gradient-to-r from-pink-500 to-teal-400 hover:from-pink-600 hover:to-teal-500 text-slate-950 font-bold rounded-xl text-xs sm:text-sm shadow-md transition flex items-center space-x-2">
+            <span>Avançar para Skincare</span>
+            <i class="fa-solid fa-arrow-right text-xs"></i>
+          </button>
+        </div>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- ETAPA 3: HÁBITOS DE SKINCARE & CUIDADOS (Q4, Q5, Q6) -->
+      <!-- ============================================================ -->
+      <section id="step-3" class="step-pane hidden space-y-6">
+        <div class="border-b border-white/10 pb-3 flex items-center space-x-2 text-teal-400 text-xs font-bold uppercase tracking-wider">
+          <i class="fa-solid fa-pump-soap"></i>
+          <span>Bloco 2: Hábitos de Cuidado com a Pele (Skincare)</span>
+        </div>
+
+        <!-- QUESTÃO 4 -->
+        <div class="glass-card rounded-2xl p-5 sm:p-6 space-y-3" data-required="q4_protetor_solar">
+          <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">Questão 4</span>
+          <h3 class="text-sm sm:text-base font-bold text-white leading-snug">
+            4. Você costuma usar protetor solar no rosto diariamente?
+          </h3>
+          <div class="space-y-2 pt-1">
+            <button type="button" class="w-full choice-card p-3 rounded-xl flex items-center justify-between text-left text-xs sm:text-sm font-semibold text-slate-200" data-field="q4_protetor_solar" data-val="Sim">
+              <span>Sim</span>
+              <span class="check-circle w-5 h-5 rounded-full border border-white/20 flex items-center justify-center text-[10px]"><i class="fa-solid fa-check opacity-0"></i></span>
+            </button>
+            <button type="button" class="w-full choice-card p-3 rounded-xl flex items-center justify-between text-left text-xs sm:text-sm font-semibold text-slate-200" data-field="q4_protetor_solar" data-val="Não">
+              <span>Não</span>
+              <span class="check-circle w-5 h-5 rounded-full border border-white/20 flex items-center justify-center text-[10px]"><i class="fa-solid fa-check opacity-0"></i></span>
+            </button>
+            <button type="button" class="w-full choice-card p-3 rounded-xl flex items-center justify-between text-left text-xs sm:text-sm font-semibold text-slate-200" data-field="q4_protetor_solar" data-val="Às vezes / Apenas quando vou à praia ou piscina">
+              <span>Às vezes / Apenas quando vou à praia ou piscina</span>
+              <span class="check-circle w-5 h-5 rounded-full border border-white/20 flex items-center justify-center text-[10px]"><i class="fa-solid fa-check opacity-0"></i></span>
+            </button>
+          </div>
+          <input type="hidden" name="q4_protetor_solar" required />
+        </div>
+
+        <!-- QUESTÃO 5 -->
+        <div class="glass-card rounded-2xl p-5 sm:p-6 space-y-3" data-required="q5_sabonete_especifico">
+          <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-teal-500/10 text-teal-400 border border-teal-500/20">Questão 5</span>
+          <h3 class="text-sm sm:text-base font-bold text-white leading-snug">
+            5. Com que frequência você lava o rosto com um sabonete específico para a sua pele?
+          </h3>
+          <div class="space-y-2 pt-1">
+            <button type="button" class="w-full choice-card p-3 rounded-xl flex items-center justify-between text-left text-xs sm:text-sm font-semibold text-slate-200" data-field="q5_sabonete_especifico" data-val="Duas ou mais vezes ao dia">
+              <span>Duas ou mais vezes ao dia</span>
+              <span class="check-circle w-5 h-5 rounded-full border border-white/20 flex items-center justify-center text-[10px]"><i class="fa-solid fa-check opacity-0"></i></span>
+            </button>
+            <button type="button" class="w-full choice-card p-3 rounded-xl flex items-center justify-between text-left text-xs sm:text-sm font-semibold text-slate-200" data-field="q5_sabonete_especifico" data-val="Uma vez ao dia">
+              <span>Uma vez ao dia</span>
+              <span class="check-circle w-5 h-5 rounded-full border border-white/20 flex items-center justify-center text-[10px]"><i class="fa-solid fa-check opacity-0"></i></span>
+            </button>
+            <button type="button" class="w-full choice-card p-3 rounded-xl flex items-center justify-between text-left text-xs sm:text-sm font-semibold text-slate-200" data-field="q5_sabonete_especifico" data-val="Apenas durante o banho">
+              <span>Apenas durante o banho</span>
+              <span class="check-circle w-5 h-5 rounded-full border border-white/20 flex items-center justify-center text-[10px]"><i class="fa-solid fa-check opacity-0"></i></span>
+            </button>
+            <button type="button" class="w-full choice-card p-3 rounded-xl flex items-center justify-between text-left text-xs sm:text-sm font-semibold text-slate-200" data-field="q5_sabonete_especifico" data-val="Não uso sabonete específico">
+              <span>Não uso sabonete específico</span>
+              <span class="check-circle w-5 h-5 rounded-full border border-white/20 flex items-center justify-center text-[10px]"><i class="fa-solid fa-check opacity-0"></i></span>
+            </button>
+          </div>
+          <input type="hidden" name="q5_sabonete_especifico" required />
+        </div>
+
+        <!-- QUESTÃO 6 -->
+        <div class="glass-card rounded-2xl p-5 sm:p-6 space-y-3" data-required="q6_hidratante">
+          <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-pink-500/10 text-pink-400 border border-pink-500/20">Questão 6</span>
+          <h3 class="text-sm sm:text-base font-bold text-white leading-snug">
+            6. Você utiliza algum produto hidratante no rosto?
+          </h3>
+          <div class="space-y-2 pt-1">
+            <button type="button" class="w-full choice-card p-3 rounded-xl flex items-center justify-between text-left text-xs sm:text-sm font-semibold text-slate-200" data-field="q6_hidratante" data-val="Sim, todos os dias">
+              <span>Sim, todos os dias</span>
+              <span class="check-circle w-5 h-5 rounded-full border border-white/20 flex items-center justify-center text-[10px]"><i class="fa-solid fa-check opacity-0"></i></span>
+            </button>
+            <button type="button" class="w-full choice-card p-3 rounded-xl flex items-center justify-between text-left text-xs sm:text-sm font-semibold text-slate-200" data-field="q6_hidratante" data-val="Às vezes, quando sinto a pele seca">
+              <span>Às vezes, quando sinto a pele seca</span>
+              <span class="check-circle w-5 h-5 rounded-full border border-white/20 flex items-center justify-center text-[10px]"><i class="fa-solid fa-check opacity-0"></i></span>
+            </button>
+            <button type="button" class="w-full choice-card p-3 rounded-xl flex items-center justify-between text-left text-xs sm:text-sm font-semibold text-slate-200" data-field="q6_hidratante" data-val="Não costumo usar">
+              <span>Não costumo usar</span>
+              <span class="check-circle w-5 h-5 rounded-full border border-white/20 flex items-center justify-center text-[10px]"><i class="fa-solid fa-check opacity-0"></i></span>
+            </button>
+          </div>
+          <input type="hidden" name="q6_hidratante" required />
+        </div>
+
+        <div class="pt-4 flex items-center justify-between gap-3">
+          <button type="button" onclick="goToStep(2)" class="px-5 py-3 rounded-xl border border-white/10 hover:bg-white/5 text-slate-300 font-semibold text-xs flex items-center space-x-1.5 transition">
+            <i class="fa-solid fa-arrow-left text-xs"></i>
+            <span>Voltar</span>
+          </button>
+          <button type="button" onclick="goToStep(4)" class="px-6 py-3 bg-gradient-to-r from-pink-500 to-teal-400 hover:from-pink-600 hover:to-teal-500 text-slate-950 font-bold rounded-xl text-xs sm:text-sm shadow-md transition flex items-center space-x-2">
+            <span>Avançar para Etapa Final</span>
+            <i class="fa-solid fa-arrow-right text-xs"></i>
+          </button>
+        </div>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- ETAPA 4: INFORMAÇÃO, AUTOESTIMA E ESTILO DE VIDA (Q7 a Q13) -->
+      <!-- ============================================================ -->
+      <section id="step-4" class="step-pane hidden space-y-6">
+        <div class="border-b border-white/10 pb-3 flex items-center space-x-2 text-purple-400 text-xs font-bold uppercase tracking-wider">
+          <i class="fa-solid fa-heart-pulse"></i>
+          <span>Bloco 3: Informação, Autoestima & Estilo de Vida</span>
+        </div>
+
+        <!-- QUESTÃO 7 -->
+        <div class="glass-card rounded-2xl p-5 sm:p-6 space-y-3" data-required="q7_tipo_pele">
+          <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20">Questão 7</span>
+          <h3 class="text-sm sm:text-base font-bold text-white leading-snug">
+            7. Você sabe qual é o seu tipo de pele (seca, oleosa, mista ou normal)?
+          </h3>
+          <div class="space-y-2 pt-1">
+            <button type="button" class="w-full choice-card p-3 rounded-xl flex items-center justify-between text-left text-xs sm:text-sm font-semibold text-slate-200" data-field="q7_tipo_pele" data-val="Sim, tenho certeza">
+              <span>Sim, tenho certeza</span>
+              <span class="check-circle w-5 h-5 rounded-full border border-white/20 flex items-center justify-center text-[10px]"><i class="fa-solid fa-check opacity-0"></i></span>
+            </button>
+            <button type="button" class="w-full choice-card p-3 rounded-xl flex items-center justify-between text-left text-xs sm:text-sm font-semibold text-slate-200" data-field="q7_tipo_pele" data-val="Acho que sei, mas tenho dúvidas">
+              <span>Acho que sei, mas tenho dúvidas</span>
+              <span class="check-circle w-5 h-5 rounded-full border border-white/20 flex items-center justify-center text-[10px]"><i class="fa-solid fa-check opacity-0"></i></span>
+            </button>
+            <button type="button" class="w-full choice-card p-3 rounded-xl flex items-center justify-between text-left text-xs sm:text-sm font-semibold text-slate-200" data-field="q7_tipo_pele" data-val="Não sei">
+              <span>Não sei</span>
+              <span class="check-circle w-5 h-5 rounded-full border border-white/20 flex items-center justify-center text-[10px]"><i class="fa-solid fa-check opacity-0"></i></span>
+            </button>
+          </div>
+          <input type="hidden" name="q7_tipo_pele" required />
+        </div>
+
+        <!-- QUESTÃO 8 -->
+        <div class="glass-card rounded-2xl p-5 sm:p-6 space-y-3" data-required="q8_fonte_informacao">
+          <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-pink-500/10 text-pink-400 border border-pink-500/20">Questão 8</span>
+          <h3 class="text-sm sm:text-base font-bold text-white leading-snug">
+            8. De onde vem a maior parte das informações que você recebe sobre cuidados com a pele?
+          </h3>
+          <div class="space-y-2 pt-1">
+            <button type="button" class="w-full choice-card p-3 rounded-xl flex items-center justify-between text-left text-xs sm:text-sm font-semibold text-slate-200" data-field="q8_fonte_informacao" data-val="Médicos dermatologistas ou profissionais da saúde">
+              <span>Médicos dermatologistas ou profissionais da saúde</span>
+              <span class="check-circle w-5 h-5 rounded-full border border-white/20 flex items-center justify-center text-[10px]"><i class="fa-solid fa-check opacity-0"></i></span>
+            </button>
+            <button type="button" class="w-full choice-card p-3 rounded-xl flex items-center justify-between text-left text-xs sm:text-sm font-semibold text-slate-200" data-field="q8_fonte_informacao" data-val="Redes sociais (Instagram, TikTok, YouTube)">
+              <span>Redes sociais (Instagram, TikTok, YouTube)</span>
+              <span class="check-circle w-5 h-5 rounded-full border border-white/20 flex items-center justify-center text-[10px]"><i class="fa-solid fa-check opacity-0"></i></span>
+            </button>
+            <button type="button" class="w-full choice-card p-3 rounded-xl flex items-center justify-between text-left text-xs sm:text-sm font-semibold text-slate-200" data-field="q8_fonte_informacao" data-val="Amigos e familiares">
+              <span>Amigos e familiares</span>
+              <span class="check-circle w-5 h-5 rounded-full border border-white/20 flex items-center justify-center text-[10px]"><i class="fa-solid fa-check opacity-0"></i></span>
+            </button>
+            <button type="button" class="w-full choice-card p-3 rounded-xl flex items-center justify-between text-left text-xs sm:text-sm font-semibold text-slate-200" data-field="q8_fonte_informacao" data-val="Não busco informações sobre isso">
+              <span>Não busco informações sobre isso</span>
+              <span class="check-circle w-5 h-5 rounded-full border border-white/20 flex items-center justify-center text-[10px]"><i class="fa-solid fa-check opacity-0"></i></span>
+            </button>
+          </div>
+          <input type="hidden" name="q8_fonte_informacao" required />
+        </div>
+
+        <!-- QUESTÃO 9 -->
+        <div class="glass-card rounded-2xl p-5 sm:p-6 space-y-3" data-required="q9_autoestima_pele">
+          <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/10 text-rose-400 border border-rose-500/20">Questão 9</span>
+          <h3 class="text-sm sm:text-base font-bold text-white leading-snug">
+            9. A aparência da sua pele (presença de espinhas, manchas ou oleosidade) afeta a sua autoestima?
+          </h3>
+          <div class="space-y-2 pt-1">
+            <button type="button" class="w-full choice-card p-3 rounded-xl flex items-center justify-between text-left text-xs sm:text-sm font-semibold text-slate-200" data-field="q9_autoestima_pele" data-val="Sim, frequentemente">
+              <span>Sim, frequentemente</span>
+              <span class="check-circle w-5 h-5 rounded-full border border-white/20 flex items-center justify-center text-[10px]"><i class="fa-solid fa-check opacity-0"></i></span>
+            </button>
+            <button type="button" class="w-full choice-card p-3 rounded-xl flex items-center justify-between text-left text-xs sm:text-sm font-semibold text-slate-200" data-field="q9_autoestima_pele" data-val="Às vezes, dependendo do estado da pele">
+              <span>Às vezes, dependendo do estado da pele</span>
+              <span class="check-circle w-5 h-5 rounded-full border border-white/20 flex items-center justify-center text-[10px]"><i class="fa-solid fa-check opacity-0"></i></span>
+            </button>
+            <button type="button" class="w-full choice-card p-3 rounded-xl flex items-center justify-between text-left text-xs sm:text-sm font-semibold text-slate-200" data-field="q9_autoestima_pele" data-val="Raramente ou nunca">
+              <span>Raramente ou nunca</span>
+              <span class="check-circle w-5 h-5 rounded-full border border-white/20 flex items-center justify-center text-[10px]"><i class="fa-solid fa-check opacity-0"></i></span>
+            </button>
+          </div>
+          <input type="hidden" name="q9_autoestima_pele" required />
+        </div>
+
+        <!-- QUESTÃO 10 -->
+        <div class="glass-card rounded-2xl p-5 sm:p-6 space-y-3" data-required="q10_evita_compromissos">
+          <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-violet-500/10 text-violet-400 border border-violet-500/20">Questão 10</span>
+          <h3 class="text-sm sm:text-base font-bold text-white leading-snug">
+            10. Você já deixou de ir a algum compromisso social ou de tirar fotos por não estar contente com a aparência da sua pele?
+          </h3>
+          <div class="grid grid-cols-3 gap-2.5 pt-1">
+            <button type="button" class="choice-card p-3.5 rounded-xl flex flex-col items-center justify-center text-xs sm:text-sm font-semibold text-slate-200 text-center" data-field="q10_evita_compromissos" data-val="Sim">
+              <span>Sim</span>
+            </button>
+            <button type="button" class="choice-card p-3.5 rounded-xl flex flex-col items-center justify-center text-xs sm:text-sm font-semibold text-slate-200 text-center" data-field="q10_evita_compromissos" data-val="Não">
+              <span>Não</span>
+            </button>
+            <button type="button" class="choice-card p-3.5 rounded-xl flex flex-col items-center justify-center text-xs sm:text-sm font-semibold text-slate-200 text-center" data-field="q10_evita_compromissos" data-val="Não me recordo">
+              <span>Não me recordo</span>
+            </button>
+          </div>
+          <input type="hidden" name="q10_evita_compromissos" required />
+        </div>
+
+        <!-- QUESTÃO 11 -->
+        <div class="glass-card rounded-2xl p-5 sm:p-6 space-y-3" data-required="q11_alimentacao_acne">
+          <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">Questão 11</span>
+          <h3 class="text-sm sm:text-base font-bold text-white leading-snug">
+            11. Você percebe se o aparecimento de espinhas ou o aumento da oleosidade está relacionado ao consumo de algum tipo de alimento (como doces, frituras ou laticínios)?
+          </h3>
+          <div class="space-y-2 pt-1">
+            <button type="button" class="w-full choice-card p-3 rounded-xl flex items-center justify-between text-left text-xs sm:text-sm font-semibold text-slate-200" data-field="q11_alimentacao_acne" data-val="Sim, percebo claramente">
+              <span>Sim, percebo claramente</span>
+              <span class="check-circle w-5 h-5 rounded-full border border-white/20 flex items-center justify-center text-[10px]"><i class="fa-solid fa-check opacity-0"></i></span>
+            </button>
+            <button type="button" class="w-full choice-card p-3 rounded-xl flex items-center justify-between text-left text-xs sm:text-sm font-semibold text-slate-200" data-field="q11_alimentacao_acne" data-val="Às vezes noto alguma diferença">
+              <span>Às vezes noto alguma diferença</span>
+              <span class="check-circle w-5 h-5 rounded-full border border-white/20 flex items-center justify-center text-[10px]"><i class="fa-solid fa-check opacity-0"></i></span>
+            </button>
+            <button type="button" class="w-full choice-card p-3 rounded-xl flex items-center justify-between text-left text-xs sm:text-sm font-semibold text-slate-200" data-field="q11_alimentacao_acne" data-val="Não noto nenhuma relação">
+              <span>Não noto nenhuma relação</span>
+              <span class="check-circle w-5 h-5 rounded-full border border-white/20 flex items-center justify-center text-[10px]"><i class="fa-solid fa-check opacity-0"></i></span>
+            </button>
+          </div>
+          <input type="hidden" name="q11_alimentacao_acne" required />
+        </div>
+
+        <!-- QUESTÃO 12 -->
+        <div class="glass-card rounded-2xl p-5 sm:p-6 space-y-3" data-required="q12_estresse_sono">
+          <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">Questão 12</span>
+          <h3 class="text-sm sm:text-base font-bold text-white leading-snug">
+            12. Você considera que o estresse ou a falta de sono pioram a qualidade da sua pele?
+          </h3>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
+            <button type="button" class="choice-card p-3.5 rounded-xl flex flex-col items-center justify-center text-xs sm:text-sm font-semibold text-slate-200 text-center" data-field="q12_estresse_sono" data-val="Sim">
+              <span>Sim</span>
+            </button>
+            <button type="button" class="choice-card p-3.5 rounded-xl flex flex-col items-center justify-center text-xs sm:text-sm font-semibold text-slate-200 text-center" data-field="q12_estresse_sono" data-val="Não">
+              <span>Não</span>
+            </button>
+            <button type="button" class="choice-card p-3.5 rounded-xl flex flex-col items-center justify-center text-xs sm:text-sm font-semibold text-slate-200 text-center" data-field="q12_estresse_sono" data-val="Talvez / Nunca reparei">
+              <span>Talvez / Nunca reparei</span>
+            </button>
+          </div>
+          <input type="hidden" name="q12_estresse_sono" required />
+        </div>
+
+        <!-- QUESTÃO 13 -->
+        <div class="glass-card rounded-2xl p-5 sm:p-6 space-y-3" data-required="q13_consulta_dermatologista">
+          <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Questão 13</span>
+          <h3 class="text-sm sm:text-base font-bold text-white leading-snug">
+            13. Você já passou por uma consulta com um médico dermatologista?
+          </h3>
+          <div class="space-y-2 pt-1">
+            <button type="button" class="w-full choice-card p-3 rounded-xl flex items-center justify-between text-left text-xs sm:text-sm font-semibold text-slate-200" data-field="q13_consulta_dermatologista" data-val="Sim, vou com frequência">
+              <span>Sim, vou com frequência</span>
+              <span class="check-circle w-5 h-5 rounded-full border border-white/20 flex items-center justify-center text-[10px]"><i class="fa-solid fa-check opacity-0"></i></span>
+            </button>
+            <button type="button" class="w-full choice-card p-3 rounded-xl flex items-center justify-between text-left text-xs sm:text-sm font-semibold text-slate-200" data-field="q13_consulta_dermatologista" data-val="Sim, mas fui poucas vezes na vida">
+              <span>Sim, mas fui poucas vezes na vida</span>
+              <span class="check-circle w-5 h-5 rounded-full border border-white/20 flex items-center justify-center text-[10px]"><i class="fa-solid fa-check opacity-0"></i></span>
+            </button>
+            <button type="button" class="w-full choice-card p-3 rounded-xl flex items-center justify-between text-left text-xs sm:text-sm font-semibold text-slate-200" data-field="q13_consulta_dermatologista" data-val="Nunca fui">
+              <span>Nunca fui</span>
+              <span class="check-circle w-5 h-5 rounded-full border border-white/20 flex items-center justify-center text-[10px]"><i class="fa-solid fa-check opacity-0"></i></span>
+            </button>
+          </div>
+          <input type="hidden" name="q13_consulta_dermatologista" required />
+        </div>
+
+        <!-- Botões de Envio da Etapa 4 -->
+        <div class="pt-4 border-t border-white/10 flex items-center gap-3">
+          <button type="button" onclick="goToStep(3)" class="px-5 py-3 rounded-xl border border-white/10 hover:bg-white/5 text-slate-300 font-semibold text-xs flex items-center space-x-1.5 transition shrink-0">
+            <i class="fa-solid fa-arrow-left text-xs"></i>
+            <span>Voltar</span>
+          </button>
+          <button type="submit" id="submit-btn" class="flex-1 py-3.5 bg-gradient-to-r from-pink-500 via-rose-500 to-teal-400 hover:from-pink-600 hover:to-teal-500 text-slate-950 font-black rounded-xl text-xs sm:text-sm shadow-xl shadow-pink-500/25 flex items-center justify-center space-x-2 transition transform active:scale-95">
+            <i class="fa-solid fa-paper-plane text-xs"></i>
+            <span>Concluir e Enviar Respostas</span>
+          </button>
+        </div>
+      </section>
+
+    </form>
+
+    <!-- Tela de Conclusão / Sucesso -->
+    <div id="success-screen" class="hidden glass-card rounded-3xl p-8 sm:p-12 text-center space-y-6 my-8">
+      <div class="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-2xl bg-gradient-to-tr from-pink-500 to-teal-400 flex items-center justify-center text-slate-950 shadow-2xl shadow-pink-500/40 text-2xl sm:text-3xl">
+        <i class="fa-solid fa-check"></i>
+      </div>
+      <div class="space-y-2">
+        <h2 class="text-2xl sm:text-3xl font-black text-white">Muito obrigado pela sua participação!</h2>
+        <p class="text-sm text-slate-300 max-w-md mx-auto leading-relaxed">
+          Sua contribuição é essencial para enriquecer esta pesquisa acadêmica sobre a influência dos fatores hormonais e estilo de vida na saúde estética da pele.
+        </p>
+      </div>
+      <div class="p-4 rounded-2xl bg-white/5 border border-white/10 text-xs text-slate-400 max-w-md mx-auto">
+        <p><strong class="text-pink-400">Dica da Biomedicina Estética:</strong> A proteção solar diária associada à higienização adequada são os maiores aliados na prevenção de danos cutâneos e no equilíbrio da barreira da pele.</p>
+      </div>
+      <div class="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+        <button onclick="window.location.reload()" class="w-full sm:w-auto px-6 py-3 rounded-xl border border-white/10 text-slate-300 hover:text-white hover:bg-white/10 text-xs font-semibold transition">
+          Preencher outro formulário
+        </button>
+        <a href="/admin" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-pink-500/20 border border-pink-500/30 text-pink-300 hover:bg-pink-500/30 text-xs font-semibold transition flex items-center justify-center space-x-1.5">
+          <i class="fa-solid fa-chart-line"></i>
+          <span>Visualizar Gráficos no Painel</span>
+        </a>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Rodapé -->
+  <footer class="relative z-10 w-full border-t border-white/10 py-5 text-center text-xs text-slate-500">
+    <div class="max-w-4xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <p>© 2026 Pesquisa Acadêmica • Biomedicina Estética</p>
+      <div class="flex items-center space-x-3 text-slate-400">
+        <span class="flex items-center"><i class="fa-solid fa-shield-halved text-teal-400 mr-1.5"></i> Respostas 100% Anônimas</span>
+        <span>•</span>
+        <a href="/admin" class="hover:text-pink-400 transition">Painel dos Gráficos</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/form.js"></script>
+</body>
+</html>
