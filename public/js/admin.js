@@ -367,6 +367,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const rows = data.filter(r => {
       if (!q) return true;
       return (
+        (r.nome || '').toLowerCase().includes(q) ||
         (r.idade || '').toLowerCase().includes(q) ||
         (r.genero || '').toLowerCase().includes(q) ||
         (r.q3_acne_frequencia || '').toLowerCase().includes(q) ||
@@ -384,6 +385,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return `
         <tr class="hover:bg-white/5 transition">
           <td class="p-3 text-slate-400 font-sans">${date}</td>
+          <td class="p-3 font-semibold text-white font-sans">${r.nome || "Anonimo"}</td>
           <td class="p-3 font-semibold text-white font-sans">${r.idade || '-'}</td>
           <td class="p-3 text-slate-300 font-sans">${r.genero || '-'}</td>
           <td class="p-3 font-sans">${badge(r.q1_mudanca_adolescencia)}</td>
@@ -463,7 +465,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const headers = [
-      'ID', 'Data', 'Idade', 'Genero', 'Rotina',
+      'ID', 'Data', 'Nome', 'Idade', 'Genero', 'Rotina',
       'Q1_Mudanca_Adolescencia', 'Q2_Oleosidade_Periodos', 'Q3_Acne_Frequencia',
       'Q4_Protetor_Solar', 'Q5_Sabonete_Especifico', 'Q6_Hidratante',
       'Q7_Tipo_Pele', 'Q8_Fonte_Informacao', 'Q9_Autoestima_Pele',
@@ -477,6 +479,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const row = [
         r.id || '',
         r.created_at || '',
+        `"${(r.nome || '').replace(/"/g, '""')}"`,
         `"${(r.idade || '').replace(/"/g, '""')}"`,
         `"${(r.genero || '').replace(/"/g, '""')}"`,
         `"${(r.rotina || '').replace(/"/g, '""')}"`,
