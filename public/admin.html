@@ -49,7 +49,12 @@
       border: 1px solid rgba(255, 255, 255, 0.08);
       box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.6);
     }
-  </style>
+  
+    button, input, select {
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+</style>
 </head>
 <body class="bg-[#080c15] text-slate-100 min-h-screen flex flex-col justify-between relative selection:bg-pink-500 selection:text-white">
 
@@ -89,7 +94,7 @@
               id="admin-password" 
               required 
               placeholder="Digite sua senha..."
-              class="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-900/90 border border-white/10 focus:border-pink-500 focus:ring-2 focus:ring-pink-500/20 outline-none text-sm text-slate-100 placeholder-slate-500 transition" 
+              class="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-900/90 border border-white/10 focus:border-pink-500 focus:ring-2 focus:ring-pink-500/20 outline-none text-[16px] sm:text-sm text-slate-100 placeholder-slate-500 transition" 
             />
           </div>
         </div>
@@ -121,6 +126,33 @@
   <!-- ============================================================ -->
   <!-- DASHBOARD PRINCIPAL (Exibido somente após login autenticado) -->
   <!-- ============================================================ -->
+  
+  <!-- ============================================================ -->
+  <!-- MODAL DE CONFIRMAÇÃO DE EXCLUSÃO (CARD CENTRALIZADO) -->
+  <!-- ============================================================ -->
+  <div id="confirm-delete-modal" class="hidden fixed inset-0 z-50 bg-[#080c15]/85 backdrop-blur-md flex items-center justify-center p-4 transition-all duration-300">
+    <div class="glass-card rounded-3xl p-6 sm:p-8 max-w-sm sm:max-w-md w-full space-y-5 border border-rose-500/30 shadow-2xl shadow-rose-950/40 text-center animate-fade-in">
+      <div class="w-16 h-16 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-400 flex items-center justify-center mx-auto text-2xl shadow-lg shadow-rose-500/20">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+      </div>
+      <div class="space-y-2">
+        <h3 class="text-xl sm:text-2xl font-black text-white">Apagar Todas as Respostas?</h3>
+        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+          Esta ação apagará permanentemente todas as respostas salvas no <strong class="text-white">Supabase</strong> e no servidor. <span class="text-rose-400 font-semibold block mt-1">Essa ação não pode ser desfeita.</span>
+        </p>
+      </div>
+      <div class="grid grid-cols-2 gap-3 pt-2">
+        <button type="button" id="btn-cancel-delete" class="py-3 px-4 rounded-xl border border-white/10 hover:bg-white/5 text-slate-300 font-semibold text-xs sm:text-sm transition active:scale-95">
+          Cancelar
+        </button>
+        <button type="button" id="btn-confirm-delete" class="py-3 px-4 rounded-xl bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-rose-600/30 flex items-center justify-center space-x-2 transition transform active:scale-95">
+          <i class="fa-solid fa-trash-can text-xs"></i>
+          <span>Sim, Apagar Tudo</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <div id="admin-dashboard" class="hidden flex-1 flex flex-col relative z-10">
 
     <!-- Top Navigation Bar -->
@@ -143,21 +175,25 @@
           </div>
         </div>
 
-        <!-- Action Buttons -->
-        <div class="flex items-center space-x-2.5">
-          <button id="btn-seed" class="px-3 py-2 bg-gradient-to-r from-pink-500/20 to-purple-500/20 hover:from-pink-500/30 hover:to-purple-500/30 border border-pink-500/30 text-pink-300 rounded-xl text-xs font-semibold flex items-center space-x-1.5 transition">
-            <i class="fa-solid fa-wand-magic-sparkles text-pink-400"></i>
+        <!-- Action Buttons (Otimizados para Mobile e Desktop) -->
+        <div class="flex items-center flex-wrap gap-2">
+          <button id="btn-refresh-data" class="px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/10 text-slate-200 rounded-xl text-xs font-semibold flex items-center space-x-1.5 transition active:scale-95" title="Sincronizar com banco de dados">
+            <i class="fa-solid fa-arrows-rotate text-teal-400 text-xs"></i>
+            <span class="hidden sm:inline">Atualizar</span>
+          </button>
+          <button id="btn-seed" class="px-3 py-2 bg-gradient-to-r from-pink-500/20 to-purple-500/20 hover:from-pink-500/30 hover:to-purple-500/30 border border-pink-500/30 text-pink-300 rounded-xl text-xs font-semibold flex items-center space-x-1.5 transition active:scale-95">
+            <i class="fa-solid fa-wand-magic-sparkles text-pink-400 text-xs"></i>
             <span class="hidden sm:inline">+25 Amostras</span>
           </button>
-          <button id="btn-export-csv" class="px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/10 text-slate-200 rounded-xl text-xs font-semibold flex items-center space-x-1.5 transition">
-            <i class="fa-solid fa-file-csv text-teal-400"></i>
-            <span>Exportar CSV</span>
+          <button id="btn-export-csv" class="px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/10 text-slate-200 rounded-xl text-xs font-semibold flex items-center space-x-1.5 transition active:scale-95">
+            <i class="fa-solid fa-file-csv text-teal-400 text-xs"></i>
+            <span class="hidden sm:inline">Exportar CSV</span>
           </button>
-          <a href="/" target="_blank" class="px-3 py-2 bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-slate-950 rounded-xl text-xs font-bold flex items-center space-x-1.5 transition shadow-lg shadow-teal-500/20">
-            <i class="fa-solid fa-square-arrow-up-right"></i>
+          <a href="/" target="_blank" class="px-3 py-2 bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-slate-950 rounded-xl text-xs font-bold flex items-center space-x-1.5 transition shadow-lg shadow-teal-500/20 active:scale-95">
+            <i class="fa-solid fa-square-arrow-up-right text-xs"></i>
             <span class="hidden sm:inline">Ver Formulário</span>
           </a>
-          <button id="btn-logout" class="px-3 py-2 bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/30 text-rose-300 rounded-xl text-xs font-bold flex items-center space-x-1.5 transition" title="Encerrar Sessão">
+          <button id="btn-logout" class="px-3 py-2 bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/30 text-rose-300 rounded-xl text-xs font-bold flex items-center space-x-1.5 transition active:scale-95" title="Encerrar Sessão">
             <i class="fa-solid fa-right-from-bracket text-xs"></i>
             <span>Sair</span>
           </button>
@@ -387,7 +423,7 @@
             <p class="text-xs text-slate-400">Registros em tempo real armazenados localmente.</p>
           </div>
           <div class="flex items-center space-x-2">
-            <input type="text" id="table-search" placeholder="Buscar por idade, gênero..." class="bg-slate-900 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-pink-500 w-48" />
+            <input type="text" id="table-search" placeholder="Buscar por nome, idade..." class="bg-slate-900 border border-white/10 rounded-xl px-3 py-2 text-[16px] sm:text-xs text-slate-200 focus:outline-none focus:border-pink-500 w-48" />
             <button id="btn-clear-data" class="text-xs text-rose-400 hover:text-rose-300 border border-rose-500/20 px-3 py-1.5 rounded-xl hover:bg-rose-500/10 transition">
               <i class="fa-solid fa-trash-can mr-1"></i> Limpar
             </button>
