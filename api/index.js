@@ -135,7 +135,9 @@ module.exports = async (req, res) => {
     if (!verifyAdmin(req)) return res.status(401).json({ error: 'Não autorizado.' });
 
     const count = parseInt(body.count) || 25;
+    const sampleNames = ['Ana Clara Silva', 'Lucas Oliveira', 'Beatriz Santos', 'Gabriel Souza', 'Mariana Costa', 'Matheus Lima', 'Juliana Fernandes', 'Felipe Almeida', 'Camila Ribeiro', 'Rodrigo Carvalho'];
     const samplePool = {
+      nome: sampleNames,
       idade: ['12 a 15 anos', '16 a 18 anos', '16 a 18 anos', '19 a 24 anos', '19 a 24 anos', '25 a 29 anos'],
       genero: ['Feminino', 'Feminino', 'Feminino', 'Masculino', 'Masculino', 'Outro / Prefiro não responder'],
       rotina: ['Apenas estuda', 'Estuda e trabalha', 'Estuda e trabalha', 'Apenas trabalha'],
@@ -167,6 +169,7 @@ module.exports = async (req, res) => {
       generated.push({
         id: 'seed-' + Date.now() + '-' + i + '-' + Math.random().toString(36).substr(2, 4),
         created_at: new Date(Date.now() - Math.floor(Math.random() * 86400000 * 14)).toISOString(),
+        nome: pick(samplePool.nome),
         idade: pick(samplePool.idade),
         genero: pick(samplePool.genero),
         rotina: pick(samplePool.rotina),
