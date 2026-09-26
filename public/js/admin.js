@@ -24,7 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnResetFilters = document.getElementById('btn-reset-filters');
   const btnSeed = document.getElementById('btn-seed');
   const btnExportCsv = document.getElementById('btn-export-csv');
-  const btnClearData = document.getElementById('btn-clear-data');
   const tableBody = document.getElementById('table-body');
   const tableSearch = document.getElementById('table-search');
 
@@ -439,59 +438,8 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
 
-  // Modal de Confirmação de Exclusão
-  const confirmDeleteModal = document.getElementById('confirm-delete-modal');
-  const btnCancelDelete = document.getElementById('btn-cancel-delete');
-  const btnConfirmDelete = document.getElementById('btn-confirm-delete');
-  const btnRefreshData = document.getElementById('btn-refresh-data');
-
-  if (btnClearData && confirmDeleteModal) {
-    btnClearData.addEventListener('click', (e) => {
-      e.preventDefault();
-      confirmDeleteModal.classList.remove('hidden');
-    });
-  }
-
-  if (btnCancelDelete && confirmDeleteModal) {
-    btnCancelDelete.addEventListener('click', () => {
-      confirmDeleteModal.classList.add('hidden');
-    });
-    // Fechar ao clicar no backdrop escuro
-    confirmDeleteModal.addEventListener('click', (e) => {
-      if (e.target === confirmDeleteModal) {
-        confirmDeleteModal.classList.add('hidden');
-      }
-    });
-  }
-
-  if (btnConfirmDelete && confirmDeleteModal) {
-    btnConfirmDelete.addEventListener('click', async () => {
-      btnConfirmDelete.disabled = true;
-      const originalBtnHtml = btnConfirmDelete.innerHTML;
-      btnConfirmDelete.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-xs"></i><span>Apagando...</span>';
-
-      try {
-        const res = await fetch('/api/respostas', { 
-          method: 'DELETE',
-          headers: authHeaders()
-        });
-        if (res.status === 401 || res.status === 403) {
-          clearToken();
-          showLogin();
-          return;
-        }
-        await loadData();
-        confirmDeleteModal.classList.add('hidden');
-      } catch (err) {
-        alert('Erro ao apagar dados do banco de dados.');
-      } finally {
-        btnConfirmDelete.disabled = false;
-        btnConfirmDelete.innerHTML = originalBtnHtml;
-      }
-    });
-  }
-
   // Botão de Atualizar / Sincronizar
+  const btnRefreshData = document.getElementById('btn-refresh-data');
   if (btnRefreshData) {
     btnRefreshData.addEventListener('click', async () => {
       const icon = btnRefreshData.querySelector('i');
