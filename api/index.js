@@ -16,7 +16,7 @@ function verifyAdmin(req) {
   const token = authHeader.split(' ')[1];
   try {
     const decoded = Buffer.from(token, 'base64').toString('utf-8');
-    return decoded === ADMIN_PASSWORD || decoded === 'admin123';
+    return decoded === ADMIN_PASSWORD;
   } catch (e) {
     return false;
   }
@@ -54,7 +54,7 @@ module.exports = async (req, res) => {
   if (endpoint === 'admin/login') {
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
     const { password } = body;
-    if (password === ADMIN_PASSWORD || password === 'admin123') {
+    if (password === ADMIN_PASSWORD) {
       const token = Buffer.from(password).toString('base64');
       return res.status(200).json({ success: true, token });
     }
