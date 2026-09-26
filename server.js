@@ -80,9 +80,8 @@ function requireAdminAuth(req, res, next) {
   }
   const token = authHeader.replace('Bearer ', '').trim();
   const validToken = Buffer.from(ADMIN_PASSWORD).toString('base64');
-  const fallbackToken = Buffer.from('admin123').toString('base64');
   
-  if (token !== validToken && token !== fallbackToken) {
+  if (token !== validToken) {
     return res.status(403).json({ error: 'Credenciais inválidas.' });
   }
   next();
@@ -90,7 +89,7 @@ function requireAdminAuth(req, res, next) {
 
 app.post('/api/admin/login', (req, res) => {
   const { password } = req.body || {};
-  if (password === ADMIN_PASSWORD || password === 'admin123') {
+  if (password === ADMIN_PASSWORD) {
     const token = Buffer.from(password).toString('base64');
     return res.json({ success: true, token });
   }
